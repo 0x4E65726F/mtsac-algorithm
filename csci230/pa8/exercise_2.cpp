@@ -26,6 +26,17 @@
 
 using namespace std;
 
+class trie
+{
+private:
+    class Node
+    {
+        char elem;
+        
+    };
+
+};
+
 int main()
 {
     // code 
