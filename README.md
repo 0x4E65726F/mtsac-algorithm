@@ -131,3 +131,17 @@ quickSelect(S, k)
     union(a, b) - combine into a new set, destroy old set
     find(p) - position of one element, return which set
 ```
+## 04192022
+```
+Components of a DP Soln
+    - Simple subproblems
+        - Break global optimization problem into subproblems
+        - Define subproblems using indices like A_(i,j), L_(i,j)
+    - Subproblem optimization
+        - Optimal solution to the problem must be a composition of optimal subproblems solutions (same as greedy method)
+    - Subproblem overlap
+        - Revisit the same subproblems already solved and stored in a table
+A recursice approach
+    - Almost like divide-and-conquer
+    - Define subproblems
+    - Subproblem optimaity
