@@ -23,6 +23,7 @@
 */
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ private:
     class Node
     {
         char elem;
-        
+        vector<Node *> child;
     };
 
 };
