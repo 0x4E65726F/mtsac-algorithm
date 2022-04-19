@@ -1,5 +1,6 @@
 # mtsac-algorithm
-02222022
+## 02222022
+```
 	Searching
 		hash map
 		skip list: logn
@@ -52,8 +53,9 @@
 	C++ map
 		ordered map - class map (balance BST logn)
 		unordered map - class unorderedmap (hashing, expected average O(1))
-	
-03012022
+```
+## 03012022
+```
 	unordered vs ordered maps<k, v>
 		HashTable
 			average O(1)
@@ -84,8 +86,9 @@
 		- Sorted array/vector
 			insert O(n)
 			findAll(k) O(logn + s)
-			
-03172022
+```			
+## 03172022
+```
 	Some descriple sorting properties
 		- In-place - no extra memory
 			- merge sort (F)
@@ -99,14 +102,16 @@
 			- insertion sort (can be)
 			- merge sort (T)
 			- quick sort (depend)
-		
-03082022
+```		
+## 03082022
+```
 	Divide-and-conquer Strategy
 		Divide into 2 sections
 		Recursion - solve each section the same way
 		COunquer - combine the 2 sections into one section
-		
-03222022
+```		
+## 03222022
+```
 	quickSelect(S, k)
 		if |S| is 1
 			return first element of S'
@@ -118,10 +123,12 @@
 			return an element in E
 		else
 			quickSelect(G, k - (|L|+|E|))
-		
-04052022
+```		
+## 04052022
+```
 	- clistinct sets
 		makeSet(e) - a new set w/ one element
 		union(a, b) - combine into a new set, destroy old set
 		find(p) - position of one element, return which set
+``
 		
