@@ -133,7 +133,7 @@ quickSelect(S, k)
 ```
 ## 04192022
 ```
-Components of a DP Soln
+Components of a DP Solution
     - Simple subproblems
         - Break global optimization problem into subproblems
         - Define subproblems using indices like A_(i,j), L_(i,j)
