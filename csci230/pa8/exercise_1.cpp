@@ -20,6 +20,11 @@
 
 using namespace std;
 
+void MCP()
+{
+    
+}
+
 int main()
 {
     // code 
