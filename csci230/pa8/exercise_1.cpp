@@ -23,19 +23,15 @@ using namespace std;
 
 void MatrixChain(vector<int> d)
 {
-    int n = d.size();
-    vector<vector<int>> N(n, vector<int>(n));
+    int n = d.size() - 1;
+    vector<vector<int>> N(n, vector<int>(n, 0));   
 
-    for (int i = 0; i < n; ++i)
-        N[i][i] = 0;
-    
-
-    for (int b = 0; b < n; ++b)
+    for (int b = 1; b < n; ++b)
         for (int i = 0; i <= n - b - 1; ++i)
         {
             int j = i + b;
             N[i][j] = INT_MAX;
-            for (int k = 0; k < j; ++k) 
+            for (int k = i; k < j; ++k) 
             {
                 int a = N[i][j];
                 int b = N[i][k] + N[k + 1][j] + d[i] * d[k + 1] * d[j + 1];
@@ -43,21 +39,29 @@ void MatrixChain(vector<int> d)
             }
         }
     
-
+    cout << "Matrix result:\n";
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
             cout << N[i][j] << "\t";
         cout << endl;
     }
-    
-    
+
+    cout << "Order of evaluation:\n";
+
+    cout << endl;
 }
 
 int main()
 {
-    vector<int> test1 = {2, 10, 10, 50, 50, 20}; 
+    // 2x10 (A), 10x50 (B), 50x20 (C)
+    vector<int> test1 = {2, 10, 50, 20};
+
+    // 10x5 (A), 5x2 (B), 2x20 (C), 20x12 (D), 12x4 (E), and 4x60 (F)
+    vector<int> test2 = {10, 5, 2, 20, 12, 4, 60}; 
+
     MatrixChain(test1);
+    MatrixChain(test2);
 
     cout << "Author: Nero Li\n";
 
