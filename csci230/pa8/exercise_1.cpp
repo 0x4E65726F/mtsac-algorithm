@@ -17,17 +17,47 @@
 */
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-void MCP()
+void MatrixChain(vector<int> d)
 {
+    int n = d.size();
+    vector<vector<int>> N(n, vector<int>(n));
+
+    for (int i = 0; i < n; ++i)
+        N[i][i] = 0;
+    
+
+    for (int b = 0; b < n; ++b)
+        for (int i = 0; i <= n - b - 1; ++i)
+        {
+            int j = i + b;
+            N[i][j] = INT_MAX;
+            for (int k = 0; k < j; ++k) 
+            {
+                int a = N[i][j];
+                int b = N[i][k] + N[k + 1][j] + d[i] * d[k + 1] * d[j + 1];
+                N[i][j] = a < b ? a : b;
+            }
+        }
+    
+
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+            cout << N[i][j] << "\t";
+        cout << endl;
+    }
+    
     
 }
 
 int main()
 {
-    // code 
+    vector<int> test1 = {2, 10, 10, 50, 50, 20}; 
+    MatrixChain(test1);
 
     cout << "Author: Nero Li\n";
 
