@@ -24,6 +24,8 @@ using namespace std;
 void MatrixChain(vector<int> d)
 {
     int n = d.size() - 1;
+    string order;
+    char c = 'A';
     vector<vector<int>> N(n, vector<int>(n, 0));   
 
     for (int b = 1; b < n; ++b)
@@ -48,12 +50,23 @@ void MatrixChain(vector<int> d)
     }
 
     cout << "Order of evaluation:\n";
+    for (int i = 0; i < n - 1; i++)
+    {
+        order.push_back(c++);
+        order.push_back(' ');
+        order.push_back('*');
+        order.push_back(' ');
+    }
+    order.push_back(c);
 
+    
+    cout << order << endl;
     cout << endl;
 }
 
 int main()
 {
+    /*
     // 2x10 (A), 10x50 (B), 50x20 (C)
     vector<int> test1 = {2, 10, 50, 20};
 
@@ -62,7 +75,11 @@ int main()
 
     MatrixChain(test1);
     MatrixChain(test2);
+    */
 
+    // 1x2, 2x3, 3x4, 4x5
+    vector<int> test = {5, 4, 3, 2, 1};
+    MatrixChain(test);
     cout << "Author: Nero Li\n";
 
     return 0;
