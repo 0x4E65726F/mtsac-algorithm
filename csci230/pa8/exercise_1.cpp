@@ -21,12 +21,29 @@
 
 using namespace std;
 
+void printOrder(vector<vector<int>> S, int i, int j)
+{
+    if (i == j)
+    {
+        char c = 'A' + i;
+        cout << c;
+    }
+    else
+    {
+        cout << "(";
+        printOrder(S, i, S[i][j]);
+        printOrder(S, S[i][j] + 1, j);
+        cout << ")";
+    }
+}
+
 void MatrixChain(vector<int> d)
 {
     int n = d.size() - 1;
     string order;
     char c = 'A';
     vector<vector<int>> N(n, vector<int>(n, 0));   
+    vector<vector<int>> S(n, vector<int>(n, 0));
 
     for (int b = 1; b < n; ++b)
         for (int i = 0; i <= n - b - 1; ++i)
@@ -38,6 +55,7 @@ void MatrixChain(vector<int> d)
                 int a = N[i][j];
                 int b = N[i][k] + N[k + 1][j] + d[i] * d[k + 1] * d[j + 1];
                 N[i][j] = a < b ? a : b;
+                S[i][j] = k;
             }
         }
     
@@ -48,21 +66,19 @@ void MatrixChain(vector<int> d)
             cout << N[i][j] << "\t";
         cout << endl;
     }
+    
+    for (int i = 0; i < n; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+            cout << S[i][j] << "\t";
+        cout << endl;
+    }
 
     cout << "Order of evaluation:\n";
-    for (int i = 0; i < n - 1; i++)
-    {
-        order.push_back(c++);
-        order.push_back(' ');
-        order.push_back('*');
-        order.push_back(' ');
-    }
-    order.push_back(c);
-
-    
-    cout << order << endl;
+    printOrder(S, 0, n - 1);
     cout << endl;
 }
+
 
 int main()
 {
@@ -77,8 +93,8 @@ int main()
     MatrixChain(test2);
     */
 
-    // 1x2, 2x3, 3x4, 4x5
-    vector<int> test = {5, 4, 3, 2, 1};
+    // 1x2, 2x3, 3x4
+    vector<int> test = {1,2,3,4};
     MatrixChain(test);
     cout << "Author: Nero Li\n";
 
