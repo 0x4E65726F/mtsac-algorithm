@@ -27,6 +27,7 @@ void MatrixChain(vector<int> d)
     string order;
     char c = 'A';
     vector<vector<int>> N(n, vector<int>(n, 0));   
+    vector<vector<int>> B(n, vector<int>(n, 0)); 
     vector<pair<int, int>> par(n, pair<int, int>(0, 0));
 
     for (int b = 1; b < n; ++b)
@@ -39,6 +40,7 @@ void MatrixChain(vector<int> d)
                 int a = N[i][j];
                 int b = N[i][k] + N[k + 1][j] + d[i] * d[k + 1] * d[j + 1];
                 N[i][j] = a < b ? a : b;
+                B[i][j] = k;
             }
         }
     
