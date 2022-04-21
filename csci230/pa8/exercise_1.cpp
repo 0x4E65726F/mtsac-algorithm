@@ -27,6 +27,7 @@ void MatrixChain(vector<int> d)
     string order;
     char c = 'A';
     vector<vector<int>> N(n, vector<int>(n, 0));   
+    vector<pair<int, int>> par(n, pair<int, int>(0, 0));
 
     for (int b = 1; b < n; ++b)
         for (int i = 0; i <= n - b - 1; ++i)
@@ -50,6 +51,52 @@ void MatrixChain(vector<int> d)
     }
 
     cout << "Order of evaluation:\n";
+    int ax = 0;
+    int bx = 0;
+    int ay = n - 1;
+    int by = n - 1;
+    ++par[bx++].first;
+    ++par[ay--].second;
+    for (int i = 0; i < n - 2; ++i) 
+    {
+        if (N[ax][ay] < N[bx][by])
+        {
+            ++par[ax].first;
+            ++par[ay].second;
+            --ay;
+            --by;
+        }
+        else
+        {
+            ++par[bx].first;
+            ++par[by].second;
+            ++ax;
+            ++bx;
+        }
+    }
+
+    char ch = 'A';
+    int count = 0;
+    for (auto i : par)
+    {
+        while (i.first)
+        {
+            cout << "(";
+            --i.first;
+        }
+        cout << ch;
+        ++ch;
+        while (i.second)
+        {
+            cout << ")";
+            --i.second;
+        }
+        if (count < n - 1)
+        {
+            cout << " * ";
+            ++count;
+        }
+    }
     
     cout << endl;
 }
@@ -57,7 +104,6 @@ void MatrixChain(vector<int> d)
 
 int main()
 {
-    /*
     // 2x10 (A), 10x50 (B), 50x20 (C)
     vector<int> test1 = {2, 10, 50, 20};
 
@@ -66,11 +112,7 @@ int main()
 
     MatrixChain(test1);
     MatrixChain(test2);
-    */
 
-    // 1x2, 2x3, 3x4
-    vector<int> test = {1,2,3,4};
-    MatrixChain(test);
     cout << "Author: Nero Li\n";
 
     return 0;
