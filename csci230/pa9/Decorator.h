@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include "Object.h"
 
 using namespace std;
 

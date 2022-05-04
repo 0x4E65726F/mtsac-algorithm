@@ -28,20 +28,20 @@ private:
 		string element;
 		//Position<Vertex<V>> pos;
 		Vertex *pos;
-		map<Vertex *, Edge *> *outgoing;
-		map<Vertex *, Edge *> *incoming;
-//		vector<pair<Vertex *, Edge *>> *outgoing;
-//		vector<pair<Vertex *, Edge *>> *incoming;
+		//map<Vertex *, Edge *> *outgoing;
+		//map<Vertex *, Edge *> *incoming;
+		vector<pair<Vertex *, Edge *>> *outgoing;
+		vector<pair<Vertex *, Edge *>> *incoming;
 	public :
 
 		/* Constructs a new InnerVertex instance storing the given element. */
 		InnerVertex(string elem, bool graphIsDirected = false) {
 			element = elem;
-//			outgoing = new vector<pair<Vertex *, Edge *>>();
-			outgoing = new map<Vertex *, Edge *>();
+			outgoing = new vector<pair<Vertex *, Edge *>>();
+			//outgoing = new map<Vertex *, Edge *>();
 			if (graphIsDirected)
-//				incoming = new vector<pair<Vertex *, Edge *>>();
-				incoming = new map<Vertex *, Edge *>();
+				incoming = new vector<pair<Vertex *, Edge *>>();
+				//incoming = new map<Vertex *, Edge *>();
 			else
 				incoming = outgoing;    // if undirected, alias outgoing map
 		}
@@ -56,12 +56,12 @@ private:
 		Vertex *getPosition() { return pos; }
 
 		/* Returns reference to the underlying map of outgoing edges. */
-//		vector<pair<Vertex *, Edge *>> *getOutgoing() { return outgoing; }
-		map<Vertex *, Edge *> *getOutgoing() { return outgoing; }
+		vector<pair<Vertex *, Edge *>> *getOutgoing() { return outgoing; }
+		//map<Vertex *, Edge *> *getOutgoing() { return outgoing; }
 
 		/* Returns reference to the underlying map of incoming edges. */
-//		vector<pair<Vertex *, Edge *>> *getIncoming() { return incoming; }
-		map<Vertex *, Edge *> *getIncoming() { return incoming; }
+		vector<pair<Vertex *, Edge *>> *getIncoming() { return incoming; }
+		//map<Vertex *, Edge *> *getIncoming() { return incoming; }
 	}; //------------ end of InnerVertex class ------------
 
 	//---------------- nested InnerEdge class ----------------
@@ -167,7 +167,8 @@ public:
 	vector<Edge *> outgoingEdges(Vertex *v) // throws IllegalArgumentException;
 	{
 		vector<Edge *> temp;
-		map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getOutgoing();
+		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getOutgoing();
+		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getOutgoing();
 		for (auto it = mapPtr->begin(); it != mapPtr->end(); ++it) {
 			temp.push_back(it->second);
 		}
@@ -183,7 +184,8 @@ public:
 	vector<Edge *> incomingEdges(Vertex *v) // throws IllegalArgumentException;
 	{
 		vector<Edge *> temp;
-		map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
+		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
+		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
 		for (auto it = mapPtr->begin(); it != mapPtr->end(); ++it) {
 			temp.push_back(it->second);
 		}
@@ -194,8 +196,17 @@ public:
 	Edge *getEdge(Vertex *u, Vertex *v) // throws IllegalArgumentException;
 	{
 		Edge *temp = nullptr;
-		map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(u)->getOutgoing();
-		auto it = mapPtr->find(static_cast<InnerVertex *>(v));
+		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
+		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(u)->getOutgoing();
+		//auto it = mapPtr->find(static_cast<InnerVertex *>(v));
+		auto it = mapPtr->begin();
+		for (auto n : *mapPtr)
+		{
+			if (n.first == static_cast<InnerVertex *>(v))
+				break;
+			it++;
+		}
+		
 		if (it != mapPtr->end())
 			temp = it->second;
 		return temp; // origin.getOutgoing().get(v);    // will be null if no edge from u to v
@@ -245,10 +256,10 @@ public:
 		static_cast<InnerEdge *>(e)->setPosition(edges.back());
 		InnerVertex *origin = static_cast<InnerVertex *>(u);
 		InnerVertex *dest = static_cast<InnerVertex *>(v);
-//		(origin->getOutgoing())->push_back(pair<Vertex*, Edge*>(v, e));
-//		(dest->getIncoming())->push_back(pair<Vertex*, Edge*>(u, e));
-		(origin->getOutgoing())->insert(pair<Vertex*, Edge*>(v, e));
-		(dest->getIncoming())->insert(pair<Vertex*, Edge*>(u, e));
+		(origin->getOutgoing())->push_back(pair<Vertex*, Edge*>(v, e));
+		(dest->getIncoming())->push_back(pair<Vertex*, Edge*>(u, e));
+		//(origin->getOutgoing())->insert(pair<Vertex*, Edge*>(v, e));
+		//(dest->getIncoming())->insert(pair<Vertex*, Edge*>(u, e));
 
 		return e;
 	}
