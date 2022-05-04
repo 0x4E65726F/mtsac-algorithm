@@ -14,12 +14,39 @@
 */
 
 #include <iostream>
+#include <string>
+#include "AdjacencyMapGraph.h"
 
 using namespace std;
 
 int main()
 {
-    // code 
+    AdjacencyMapGraph test1;
+    Vertex *A = test1.insertVertex("A");
+	Vertex *B = test1.insertVertex("B");
+	Vertex *C = test1.insertVertex("C");
+    Edge *e1 = test1.insertEdge(B, A, 100);
+    Edge *e2 = test1.insertEdge(C, A, 200);
+
+    cout << "First graph:\n";
+    test1.print();
+    cout << endl;
+
+    AdjacencyMapGraph test2;
+    A = test2.insertVertex("A");
+	B = test2.insertVertex("B");
+	C = test2.insertVertex("C");
+    Vertex *D = test2.insertVertex("D");
+    e1 = test2.insertEdge(A, B, 10);
+    e2 = test2.insertEdge(B, C, 10);
+    Edge *e3 = test2.insertEdge(C, D, 10);
+    Edge *e4 = test2.insertEdge(D, A, 10);
+    Edge *e5 = test2.insertEdge(D, B, 10);
+    Edge *e6 = test2.insertEdge(A, C, 10);
+
+    cout << "Second graph:\n";
+    test2.print();
+    cout << endl;
 
     cout << "Author: Nero Li\n";
 
