@@ -19,7 +19,7 @@
 */
 
 #include <iostream>
-#include "AdjacencyListGraph.h"
+#include "AdjacencyMapGraph.h"
 #include "DFS.h"
 
 using namespace std;
@@ -27,14 +27,15 @@ using namespace std;
 
 int main()
 {
-    AdjacencyListGraph test1;
+    AdjacencyMapGraph test1;
     Vertex *A = test1.insertVertex("A");
 	Vertex *B = test1.insertVertex("B");
 	Vertex *C = test1.insertVertex("C");
     Edge *e1 = test1.insertEdge(B, A, 100);
     Edge *e2 = test1.insertEdge(C, A, 200);
 
-    DFS dfs(test1);
+    DFS dfs(&test1);
+    dfs.dfsTraversal(A);
 
     cout << "Modified by: Nero Li\n";
 
