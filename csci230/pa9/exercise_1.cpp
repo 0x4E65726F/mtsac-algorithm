@@ -15,13 +15,13 @@
 
 #include <iostream>
 #include <string>
-#include "AdjacencyMapGraph.h"
+#include "AdjacencyListGraph.h"
 
 using namespace std;
 
 int main()
 {
-    AdjacencyMapGraph test1;
+    AdjacencyListGraph test1;
     Vertex *A = test1.insertVertex("A");
 	Vertex *B = test1.insertVertex("B");
 	Vertex *C = test1.insertVertex("C");
@@ -32,7 +32,7 @@ int main()
     test1.print();
     cout << endl;
 
-    AdjacencyMapGraph test2;
+    AdjacencyListGraph test2;
     A = test2.insertVertex("A");
 	B = test2.insertVertex("B");
 	C = test2.insertVertex("C");
@@ -52,3 +52,9 @@ int main()
 
     return 0;
 }
+/*
+Input number of vertices, n
+Create a matrix n x n
+Store vertices in vector
+
+*/

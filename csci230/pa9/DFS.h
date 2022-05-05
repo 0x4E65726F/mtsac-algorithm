@@ -3,8 +3,20 @@
 
 #include <map>
 #include <string>
+#include "Decorator.h"
 
 using namespace std;
+
+class Vertex : public Decorator
+{
+public:
+    virtual string getString() = 0;
+};
+
+class Edge : public Decorator
+{
+
+};
 
 template <typename G>
 class DFS {						// generic DFS
@@ -21,7 +33,7 @@ protected: 						// member data
     Vertex start;					// start vertex
     Object *yes, *no;					// decorator values
 protected:						// member functions
-    DFS(const G& g);					// constructor
+    DFS(G g);					// constructor
     void initialize();					// initialize a new DFS
     void dfsTraversal(const Vertex& v);			// recursive DFS utility
                             // overridden functions
@@ -42,7 +54,7 @@ protected: 						// marking utilities
 };
 
 template <typename G>					// constructor
-DFS<G>::DFS(const G& g)
+DFS<G>::DFS(G g)
 : graph(g), yes(new Object), no(new Object) {}
 
 template <typename G>					// initialize a new DFS

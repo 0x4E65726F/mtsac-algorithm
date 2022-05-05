@@ -19,14 +19,24 @@
 */
 
 #include <iostream>
+#include "AdjacencyListGraph.h"
+#include "DFS.h"
 
 using namespace std;
 
+
 int main()
 {
-    // code 
+    AdjacencyListGraph test1;
+    Vertex *A = test1.insertVertex("A");
+	Vertex *B = test1.insertVertex("B");
+	Vertex *C = test1.insertVertex("C");
+    Edge *e1 = test1.insertEdge(B, A, 100);
+    Edge *e2 = test1.insertEdge(C, A, 200);
 
-    cout << "Author: Nero Li\n";
+    DFS dfs(test1);
+
+    cout << "Modified by: Nero Li\n";
 
     return 0;
 }

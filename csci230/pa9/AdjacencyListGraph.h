@@ -14,7 +14,7 @@ using namespace std;
 // Some operations are incomplete and there are provisions
 // to change from map to a list/vector for adjacency list
 
-class AdjacencyMapGraph : public Graph
+class AdjacencyListGraph : public Graph
 {
 private:
 	bool isDirected;
@@ -100,12 +100,12 @@ public:
 	* Constructs an empty graph.
 	* The parameter determines whether this is an undirected or directed graph.
 	*/
-	AdjacencyMapGraph(bool directed = false)
+	AdjacencyListGraph(bool directed = false)
 	{ 
 		isDirected = directed; 
 	}
 
-	~AdjacencyMapGraph()
+	~AdjacencyListGraph()
 	{
 		// should deallocate memory here
 	}
