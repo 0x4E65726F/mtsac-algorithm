@@ -9,18 +9,6 @@ using namespace std;
 
 // Make sure that Vertex and Edge is-a Decorator
 
-class Vertex : public Decorator
-{
-public:
-	virtual string setString() = 0;
-};
-
-class Edge : public Decorator
-{
-public:
-	virtual int setInt() = 0;
-};
-
 class DFS {										// generic DFS
 protected: 										// member data
 	Graph *graph;								// the graph
@@ -63,6 +51,7 @@ void DFS::initialize() {
 
 void DFS::dfsTraversal(Vertex *v) {
 	startVisit(v);  visit(v);					// visit v and mark visited
+	cout << v->getElement() << " ";
 	vector<Edge *> incident = graph->outgoingEdges(v);
 	auto pe = incident.begin();
 	while (!isDone() && pe != incident.end()) {	// visit v's incident edges
@@ -71,6 +60,7 @@ void DFS::dfsTraversal(Vertex *v) {
 			visit(e);							// mark it visited
 			Vertex *w = graph->opposite(v, e);	// get opposing vertex
 			if (!isVisited(w)) {				// unexplored?
+				cout << e->getElement() << " ";
 				traverseDiscovery(e, v);		// let's discover it
 				if (!isDone()) dfsTraversal(w);	// continue traversal
 			}

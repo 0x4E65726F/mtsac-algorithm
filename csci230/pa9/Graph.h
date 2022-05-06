@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include "Decorator.h"
 
 using namespace std;
 
@@ -10,14 +11,14 @@ using namespace std;
 // string for vertex and int for edge
 // Version 1.1 
 
-class Vertex		// behaves like interface in Java
+class Vertex : public Decorator		// behaves like interface in Java
 {
 public:
 	virtual string getElement() = 0;
 };
 
 
-class Edge			// behaves like interface in Java
+class Edge : public Decorator			// behaves like interface in Java
 {
 public:
 	virtual int getElement() = 0;

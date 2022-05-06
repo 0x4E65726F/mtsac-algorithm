@@ -26,10 +26,7 @@ private:
 	{
 	private:
 		string element;
-		//Position<Vertex<V>> pos;
 		Vertex *pos;
-		//map<Vertex *, Edge *> *outgoing;
-		//map<Vertex *, Edge *> *incoming;
 		vector<pair<Vertex *, Edge *>> *outgoing;
 		vector<pair<Vertex *, Edge *>> *incoming;
 	public :
@@ -38,10 +35,8 @@ private:
 		InnerVertex(string elem, bool graphIsDirected = false) {
 			element = elem;
 			outgoing = new vector<pair<Vertex *, Edge *>>();
-			//outgoing = new map<Vertex *, Edge *>();
 			if (graphIsDirected)
 				incoming = new vector<pair<Vertex *, Edge *>>();
-				//incoming = new map<Vertex *, Edge *>();
 			else
 				incoming = outgoing;    // if undirected, alias outgoing map
 		}
@@ -57,11 +52,9 @@ private:
 
 		/* Returns reference to the underlying map of outgoing edges. */
 		vector<pair<Vertex *, Edge *>> *getOutgoing() { return outgoing; }
-		//map<Vertex *, Edge *> *getOutgoing() { return outgoing; }
 
 		/* Returns reference to the underlying map of incoming edges. */
 		vector<pair<Vertex *, Edge *>> *getIncoming() { return incoming; }
-		//map<Vertex *, Edge *> *getIncoming() { return incoming; }
 	}; //------------ end of InnerVertex class ------------
 
 	//---------------- nested InnerEdge class ----------------
@@ -107,7 +100,13 @@ public:
 
 	~AdjacencyListGraph()
 	{
-		// should deallocate memory here
+		for (auto i : vertices)
+			delete i;
+		for (auto i : edges)
+			delete i;
+		
+		vertices.clear();
+		edges.clear();
 	}
 
 	/* Returns the number of vertices of the graph */
@@ -168,7 +167,6 @@ public:
 	{
 		vector<Edge *> temp;
 		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getOutgoing();
-		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getOutgoing();
 		for (auto it = mapPtr->begin(); it != mapPtr->end(); ++it) {
 			temp.push_back(it->second);
 		}
@@ -185,7 +183,6 @@ public:
 	{
 		vector<Edge *> temp;
 		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
-		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
 		for (auto it = mapPtr->begin(); it != mapPtr->end(); ++it) {
 			temp.push_back(it->second);
 		}
@@ -197,8 +194,6 @@ public:
 	{
 		Edge *temp = nullptr;
 		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
-		//map<Vertex *, Edge *> *mapPtr = static_cast<InnerVertex *>(u)->getOutgoing();
-		//auto it = mapPtr->find(static_cast<InnerVertex *>(v));
 		auto it = mapPtr->begin();
 		for (auto n : *mapPtr)
 		{
@@ -258,8 +253,6 @@ public:
 		InnerVertex *dest = static_cast<InnerVertex *>(v);
 		(origin->getOutgoing())->push_back(pair<Vertex*, Edge*>(v, e));
 		(dest->getIncoming())->push_back(pair<Vertex*, Edge*>(u, e));
-		//(origin->getOutgoing())->insert(pair<Vertex*, Edge*>(v, e));
-		//(dest->getIncoming())->insert(pair<Vertex*, Edge*>(u, e));
 
 		return e;
 	}
