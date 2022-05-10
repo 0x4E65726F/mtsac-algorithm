@@ -146,3 +146,11 @@ A recursice approach
     - Define subproblems
     - Subproblem optimaity
 ```
+## 05102022
+```
+- Diagraphs
+    Incoming != Outgoing
+    Directed cyclic graph - diagraph w/ no cycle
+- Transitive Closure
+    Floyd-Warshall Transitive Closure
+```
