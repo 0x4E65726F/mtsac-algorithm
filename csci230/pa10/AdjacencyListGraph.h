@@ -100,13 +100,7 @@ public:
 
 	~AdjacencyListGraph()
 	{
-		for (auto i : vertices)
-			delete i;
-		for (auto i : edges)
-			delete i;
-		
-		vertices.clear();
-		edges.clear();
+
 	}
 
 	/* Returns the number of vertices of the graph */
