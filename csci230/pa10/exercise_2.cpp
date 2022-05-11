@@ -20,11 +20,35 @@
 
 using namespace std;
 
+void dijkstra(AdjacencyListGraph G)
+{
+
+}
+
 int main()
 {
-    // code 
+    AdjacencyListGraph G(true);
 
-    cout << "Author: Nero Li\n";
+    Vertex *A = G.insertVertex("A");
+    Vertex *B = G.insertVertex("B");
+    Vertex *C = G.insertVertex("C");
+    Vertex *D = G.insertVertex("D");
+    Vertex *E = G.insertVertex("E");
+    G.insertEdge(A, D, 1);
+    G.insertEdge(A, E, 1);
+    G.insertEdge(B, A, 1);
+    G.insertEdge(B, C, 1);
+    G.insertEdge(C, D, 1);
+    G.insertEdge(D, E, 1);
+    G.insertEdge(E, C, 1);
+    cout << "Original Graph:\n";
+    G.print();
+    cout << endl;
+
+    
+    cout << endl;
+
+    cout << "Modified by: Nero Li\n";
 
     return 0;
 }

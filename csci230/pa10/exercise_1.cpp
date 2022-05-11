@@ -19,24 +19,26 @@
 
 using namespace std;
 
-bool areAdjacent(AdjacencyListGraph G, Vertex *v1, Vertex *v2)
+bool areAdjacent(AdjacencyListGraph &G, Vertex *v1, Vertex *v2)
 {
-    if (G.getEdge(v1, v2))
-        return false;
-    
-    return true;
+    vector<Edge *> out = G.outgoingEdges(v1);
+    for (auto i : out)
+        if (G.opposite(v1, i)->getElement() == v2->getElement())
+            return true;
+
+    return false;
 }
 
-AdjacencyListGraph floydWarshall(AdjacencyListGraph G)
+void floydWarshall(AdjacencyListGraph &G)
 {
-    AdjacencyListGraph Gpre;
-    AdjacencyListGraph Gcur;
+    AdjacencyListGraph Gpre(true);
+    AdjacencyListGraph Gcur(true);
     vector<Vertex *> v;
     v.push_back(NULL);
     int n = G.numVertices();
     for (auto i : G.getVertices())
         v.push_back(i);
-        
+    
     Gpre = G;
     for (int k = 1; k <= n; ++k)
     {
@@ -47,36 +49,37 @@ AdjacencyListGraph floydWarshall(AdjacencyListGraph G)
                     if (j != i && j != k)
                         if (areAdjacent(Gpre, v[i], v[k]) && areAdjacent(Gpre, v[k], v[j]))
                             if (!areAdjacent(Gcur, v[i], v[j]))
-                                Gcur.insertEdge(v[i], v[j], k);
+                                Gcur.insertEdge(v[i], v[j], k);                               
     }
 
-    return Gcur;
+    Gcur.print();
 }
 
 int main()
 {
     AdjacencyListGraph G(true);
-    vector<Vertex *> v;
-    vector<Edge *> e;
-    v.push_back(G.insertVertex("A"));
-    v.push_back(G.insertVertex("B"));
-    v.push_back(G.insertVertex("C"));
-    v.push_back(G.insertVertex("D"));
-    v.push_back(G.insertVertex("E"));
-    e.push_back(G.insertEdge(v[0], v[3], 1));
-    e.push_back(G.insertEdge(v[0], v[4], 1));
-    e.push_back(G.insertEdge(v[1], v[0], 1));
-    e.push_back(G.insertEdge(v[1], v[2], 1));
-    e.push_back(G.insertEdge(v[2], v[3], 1));
-    e.push_back(G.insertEdge(v[3], v[4], 1));
-    e.push_back(G.insertEdge(v[4], v[2], 1));
+
+    Vertex *A = G.insertVertex("A");
+    Vertex *B = G.insertVertex("B");
+    Vertex *C = G.insertVertex("C");
+    Vertex *D = G.insertVertex("D");
+    Vertex *E = G.insertVertex("E");
+    G.insertEdge(A, D, 1);
+    G.insertEdge(A, E, 1);
+    G.insertEdge(B, A, 1);
+    G.insertEdge(B, C, 1);
+    G.insertEdge(C, D, 1);
+    G.insertEdge(D, E, 1);
+    G.insertEdge(E, C, 1);
     cout << "Original Graph:\n";
     G.print();
     cout << endl;
+
     cout << "Transitive Closure:\n";
-    floydWarshall(G).print();
+    floydWarshall(G);
     cout << endl;
-    cout << "Author: Nero Li\n";
+
+    cout << "Modified by: Nero Li\n";
 
     return 0;
 }
