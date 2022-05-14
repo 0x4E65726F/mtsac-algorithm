@@ -191,7 +191,7 @@ public:
 		auto it = mapPtr->begin();
 		for (auto n : *mapPtr)
 		{
-			if (n.first == static_cast<InnerVertex *>(v))
+			if (n.first->getElement() == static_cast<InnerVertex *>(v)->getElement())
 				break;
 			it++;
 		}
