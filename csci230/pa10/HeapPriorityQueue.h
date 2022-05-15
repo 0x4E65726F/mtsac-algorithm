@@ -28,13 +28,30 @@ public:
     Position root()				                        { return pos(1); }
     Position last()				                        { return pos(size()); }
     void addLast(const E& e)			                { V.push_back(e); }
+    void swap(const Position& p, const Position& q)     { E e = *q; *q = *p; *p = e; }
+
+    // New function added for CSCI 230 PA10
     Position removeLast()				                
     { 
-        Position p = V.back();
+        Position p = V.end();
+        p--;
         V.pop_back(); 
         return p;
     }
-    void swap(const Position& p, const Position& q)     { E e = *q; *q = *p; *p = e; }
+    void remove(E e)
+    {
+        Position p = V.begin();
+        for (auto i : V)
+        {
+            if (i == e)
+            {
+                V.erase(p);
+                return;
+            }
+            p++;
+        }
+        
+    }
 };
 
 template <typename E, typename C>
@@ -43,9 +60,16 @@ class HeapPriorityQueue
 public:
     int size() const; 				// number of elements
     bool empty() const;  			// is the queue empty?
-    VectorCompleteTree<E>::Position insert(const E& e);		// insert element
+    E insert(const E& e);		// insert element
     const E& min();				    // minimum element
-    VectorCompleteTree<E>::Position removeMin();				// remove minimum
+    E removeMin();				// remove minimum
+
+    // New function added for CSCI 230 PA10
+    void replace(const E& oldElem, const E& newElem)
+    {
+        T.remove(oldElem);
+        insert(newElem);
+    }
 private: 
     VectorCompleteTree<E> T;		// priority queue contents
     C isLess;					    // less-than comparator
@@ -72,7 +96,7 @@ const E& HeapPriorityQueue<E,C>::min()
 }	
 
 template <typename E, typename C>		// insert element
-VectorCompleteTree<E>::Position HeapPriorityQueue<E,C>::insert(const E& e) 
+E HeapPriorityQueue<E,C>::insert(const E& e) 
 {
     T.addLast(e);				        // add e to heap
     Position v = T.last();			    // e's position
@@ -84,11 +108,11 @@ VectorCompleteTree<E>::Position HeapPriorityQueue<E,C>::insert(const E& e)
         v = u;
     }
 
-    return v;
+    return e;
 }
 
 template <typename E, typename C>		// remove minimum
-VectorCompleteTree<E>::Position HeapPriorityQueue<E,C>::removeMin() 
+E HeapPriorityQueue<E,C>::removeMin() 
 {
     Position p;
     if (size() == 1)				// only one node?
@@ -112,7 +136,7 @@ VectorCompleteTree<E>::Position HeapPriorityQueue<E,C>::removeMin()
         }
     }
 
-    return p;
+    return *p;
 }
 
 #endif

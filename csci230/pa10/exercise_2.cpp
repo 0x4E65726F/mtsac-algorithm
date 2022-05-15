@@ -17,51 +17,86 @@
 
 #include <iostream>
 #include <map>
+#include <stack>
 #include "AdjacencyListGraph.h"
 #include "HeapPriorityQueue.h"
+#include "Entry.h"
 
 using namespace std;
+
+typedef map<Vertex *, int> Map;
+typedef pair<Vertex *, int> MPair;
+typedef map<Vertex *, Entry<int, Vertex *>> PQTokens;
+typedef pair<Vertex *, Entry<int, Vertex *>> TPair;
+typedef Entry<int, Vertex *> TEntry;
 
 class comp
 {
 public:
-    bool operator()(pair<int, Vertex *> a, pair<int, Vertex *> b)
+    bool operator()(TEntry a, TEntry b)
     {
-        return (a.first < b.first);
+        return (a.key() < b.key());
     }
 };
 
-typedef map<Vertex *, int> DM;
-typedef pair<Vertex *, int> DMPair;
-typedef map<Vertex *, VectorCompleteTree<pair<int, Vertex *>>::Position> EM;
-typedef pair<Vertex *, VectorCompleteTree<pair<int, Vertex *>>::Position> EMPair;
-typedef HeapPriorityQueue<pair<int, Vertex *>, comp> PQ;
-typedef pair<int, Vertex *> PQPair;
-typedef VectorCompleteTree<pair<int, Vertex *>>::Position Entry;
+typedef HeapPriorityQueue<TEntry, comp> PQ;
 
-void dijkstra(AdjacencyListGraph G, Vertex *v)
+void dijkstra(AdjacencyListGraph G, Vertex *src, Vertex *dest)
 {
-    DM D;
-    EM E;
-    PQ Q;
-    Entry l;
-
-    for (auto i : G.getVertices())
+    Map D;
+    Map cloud;
+    PQ pq;
+    PQTokens pqTokens;
+    
+    for (Vertex *v : G.getVertices())
     {
-        if (i == v)
-            D.insert(DMPair(i, 0));
+        if (v == src)
+            D.insert(MPair(v, 0));
         else
-            D.insert(DMPair(i, INT_MAX));
+            D.insert(MPair(v, INT_MAX));
+        pqTokens.insert(TPair(v, pq.insert(TEntry(D[v], v))));
     }
     
-    l = Q.insert(PQPair(D[v], v));
-    E.insert(EMPair(v, l));
-
-    while (!Q.empty())
+    while (!pq.empty())
     {
-        l = Q.removeMin();
+        TEntry entry = pq.removeMin();
+        int key = entry.key();
+        Vertex *u = entry.value();
+        cloud.insert(MPair(u, key));
+        pqTokens.erase(u);
+        for (Edge *e : G.outgoingEdges(u))
+        {
+            Vertex *v = G.opposite(u, e);
+            if (cloud.find(v) == cloud.end())
+            {
+                int wgt = e->getElement();
+                if (D[u] + wgt < D[v])
+                {
+                    D[v] = D[u] + wgt;
+                    pq.replace(pqTokens[v], TEntry(D[v], v));
+                }
+            }
+        }
     }
-    
+
+    bool findStart = false;
+    bool findEnd = false;
+    for (auto i : D)
+    {
+        if (i.first == src)
+            findStart = true;
+        if (i.first == dest)
+            findEnd = true;
+        if (findStart)
+            if (findEnd)
+            {
+                cout << i.first->getElement() << "[" << i.second << "]";
+                break;
+            }
+            else
+                cout << i.first->getElement() << "[" << i.second << "] -> ";
+    }
+    cout << endl;
 }
 
 int main()
@@ -85,7 +120,7 @@ int main()
     cout << endl;
 
     cout << "Path from B to E:\n";
-    dijkstra(G, B);
+    dijkstra(G, B, E);
     cout << endl;
 
     cout << "Modified by: Nero Li\n";

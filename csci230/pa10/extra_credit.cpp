@@ -13,18 +13,43 @@
 */
 
 #include <iostream>
+#include <list>
+#include <stack>
+#include <map>
 #include "AdjacencyListGraph.h"
 
 using namespace std;
 
-void DFS()
-{
-
-}
+typedef pair<Vertex *, int> inCountPair;
 
 void topological(AdjacencyListGraph G)
 {
-
+    vector<Vertex *> result;
+    stack<Vertex *> ready;
+    map<Vertex *, int> inCount;
+    for (auto u : G.getVertices())
+    {
+        inCount.insert(inCountPair(u, G.inDegree(u)));
+        if (inCount[u] == 0)
+            ready.push(u);
+    }
+    while (!ready.empty())
+    {
+        Vertex *u = ready.top();
+        ready.pop();
+        result.push_back(u);
+        for (auto e : G.outgoingEdges(u))
+        {
+            Vertex *v = G.opposite(u, e);
+            --inCount[v];
+            if (inCount[v] == 0)
+                ready.push(v);
+        }
+    }
+    
+    for (auto i : result)
+        cout << i->getElement() << " ";
+    cout << endl;
 }
 
 int main()
@@ -49,7 +74,7 @@ int main()
     topological(G);
     cout << endl;
 
-    cout << "Author: Nero Li\n";
+    cout << "Modified by: Nero Li\n";
 
     return 0;
 }

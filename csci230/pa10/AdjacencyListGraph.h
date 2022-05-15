@@ -187,17 +187,10 @@ public:
 	Edge *getEdge(Vertex *u, Vertex *v) // throws IllegalArgumentException;
 	{
 		Edge *temp = nullptr;
-		vector<pair<Vertex *, Edge *>> *mapPtr = static_cast<InnerVertex *>(v)->getIncoming();
-		auto it = mapPtr->begin();
-		for (auto n : *mapPtr)
-		{
-			if (n.first->getElement() == static_cast<InnerVertex *>(v)->getElement())
-				break;
-			it++;
-		}
-		
-		if (it != mapPtr->end())
-			temp = it->second;
+		vector<Edge *> out = outgoingEdges(u);
+		for (auto i : out)
+			if (opposite(u, i)->getElement() == v->getElement())
+				temp = i;
 		return temp; // origin.getOutgoing().get(v);    // will be null if no edge from u to v
 	}
 
