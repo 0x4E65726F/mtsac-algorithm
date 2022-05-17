@@ -154,3 +154,8 @@ A recursice approach
 - Transitive Closure
     Floyd-Warshall Transitive Closure
 ```
+## 05172022
+```
+- Minimum Spanning Trees (MST) 
+    a.k.a. MCSP, C - cost
+```

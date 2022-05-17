@@ -9,7 +9,7 @@ using namespace std;
 
 class Object {					// generic object
 public:
-	virtual int      intValue()    const;	// throw(bad_cast);
+	virtual double   doubleValue() const;	// throw(bad_cast);
 	virtual string   stringValue() const ;	// throw(bad_cast);
 };
 
@@ -26,20 +26,20 @@ public:
 };
 
 
-class Integer : public Object {
+class Double : public Object {
 private:
-	int value;
+	double value;
 public:
-	Integer(int v = 0) : value(v) { }
-	int getValue() const
+	Double(double v = 0) : value(v) { }
+	double getValue() const
 	{
 		return value;
 	}
 };
 
-int Object::intValue() const // throw(bad_cast) {		// cast to Integer
+double Object::doubleValue() const // throw(bad_cast) {		// cast to Integer
 {
-	const Integer* p = dynamic_cast<const Integer*>(this);
+	const Double* p = dynamic_cast<const Double*>(this);
 	if (p == NULL) throw exception(); // ("Illegal attempt to cast to Integer");
 	return p->getValue();
 }

@@ -62,7 +62,7 @@ private:
 	class InnerEdge : public Edge 
 	{
 	private:
-		int element;
+		double element;
 		Edge *pos;
 		vector<Vertex *> endpoints;
 
@@ -76,7 +76,7 @@ private:
 		}
 
 		/* Returns the element associated with the edge. */
-		int getElement() { return element; }
+		double getElement() { return element; }
 
 		/* Returns reference to the endpoint array. */
 		vector<Vertex *> getEndpoints() { return endpoints; }
@@ -231,7 +231,7 @@ public:
 	*
 	* throws IllegalArgumentException if u or v are invalid vertices, or if an edge already exists between u and v.
 	*/
-	Edge *insertEdge(Vertex *u, Vertex *v, int element) // throws IllegalArgumentException;
+	Edge *insertEdge(Vertex *u, Vertex *v, double element) // throws IllegalArgumentException;
 	{
 		Edge * e = new InnerEdge(u, v, element);
 		edges.push_back(e);

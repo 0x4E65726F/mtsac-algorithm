@@ -21,7 +21,7 @@ public:
 class Edge : public Decorator			// behaves like interface in Java
 {
 public:
-	virtual int getElement() = 0;
+	virtual double getElement() = 0;
 };
 
 class Graph
@@ -93,7 +93,7 @@ public:
 	*
 	* throws IllegalArgumentException if u or v are invalid vertices, or if an edge already exists between u and v.
 	*/
-	virtual Edge *insertEdge(Vertex *u, Vertex *v, int element) = 0; // throws IllegalArgumentException;
+	virtual Edge *insertEdge(Vertex *u, Vertex *v, double element) = 0; // throws IllegalArgumentException;
 
 	/* Removes a vertex and all its incident edges from the graph. */
 	virtual void removeVertex(Vertex *v) = 0; // throws IllegalArgumentException;
