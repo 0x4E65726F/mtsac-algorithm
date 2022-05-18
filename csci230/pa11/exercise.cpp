@@ -16,6 +16,7 @@
 */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <map>
 #include <stack>
@@ -32,6 +33,7 @@ private:
     map<string, Vertex *> airport;
     vector<string> dest;
     vector<double> price;
+    enum Status {VISITED, UNEXPLORED, DISCOVERY, BACK};
 
     class comp
     {
@@ -51,11 +53,10 @@ private:
         }
     };
 
-    void cheapestFlight(Vertex *src, Vertex *dest)
+    void dijkstraPrice(Vertex *src, map<Vertex *, Vertex *> &prev, map<Vertex *, double> &cloud)
     {
         map<Vertex *, double> D;
-        map<Vertex *, double> cloud;
-        map<Vertex *, Vertex *> prev;
+        
         HeapPriorityQueue<Entry<double, Vertex *>, comp> pq;
         map<Vertex *, Entry<double, Vertex *>> pqTokens;
         
@@ -90,33 +91,97 @@ private:
                 }
             }
         }
-        cout << "Path:\t\t\t";
+    }
+
+    void cheapestFlight(Vertex *src, Vertex *dest)
+    { 
+        map<Vertex *, Vertex *> prev;
+        map<Vertex *, double> cloud;
+        dijkstraPrice(src, prev, cloud);
         stack<Vertex *> output;
+        stack<double> outPrice;
+
         Vertex *cur = dest;
         while (cur != src)
         {
             output.push(cur);
+            outPrice.push(G.getEdge(prev[cur], cur)->getElement());
             cur = prev[cur];
         }
+
+        cout << "Path:\n";
         cout << src->getElement();
         while (!output.empty())
         {
-            cout  << " -> " << output.top()->getElement();
+            cout  << " -- $" << outPrice.top() << " --> " << output.top()->getElement();
             output.pop();
+            outPrice.pop();
+        }  
+        cout << ", $" << cloud[dest] << endl;
+    }
+
+    void cheapestRoundTrip(Vertex *src, Vertex *dest)
+    {
+        map<Vertex *, Vertex *> prev_src;
+        map<Vertex *, double> cloud_src;
+        dijkstraPrice(src, prev_src, cloud_src);
+        map<Vertex *, Vertex *> prev_dest;
+        map<Vertex *, double> cloud_dest;
+        dijkstraPrice(dest, prev_dest, cloud_dest);
+        stack<Vertex *> output;
+        stack<double> outPrice;
+
+        Vertex *cur = src;
+        while (cur != dest)
+        {
+            output.push(cur);
+            outPrice.push(G.getEdge(prev_dest[cur], cur)->getElement());
+            cur = prev_dest[cur];
         }
-        cout << endl;
+        while (cur != src)
+        {
+            output.push(cur);
+            outPrice.push(G.getEdge(prev_src[cur], cur)->getElement());
+            cur = prev_src[cur];
+        }
+
+        cout << "Path:\n";
+        cout << src->getElement();
+        while (!output.empty())
+        {
+            cout  << " -- $" << outPrice.top() << " --> " << output.top()->getElement();
+            output.pop();
+            outPrice.pop();
+        }
+        cout << ", $" << cloud_src[dest] + cloud_dest[src] << endl;
+    }
+
+    void DFS(Vertex *v, map<Vertex *, Status> &label)
+    {
+        if (label[v] != DISCOVERY)
+        {
+            cout << " --> ";
+        }
         
-        cout << "Cost:\t\t\t$" << cloud[dest] << endl;
+        label[v] = VISITED;
+        cout << v->getElement();
+        for (auto e : G.outgoingEdges(v))
+        {
+            Vertex *u = G.opposite(v, e);
+            if (label[u] == UNEXPLORED)
+                DFS(u, label);
+        }
     }
 
-    void cheapestRoundTrip(Vertex *start, Vertex *end)
+    void visitAll(Vertex *v)
     {
-
-    }
-
-    void airportDFS(Vertex *start)
-    {
-
+        map<Vertex *, Status> label;
+        for (auto i : G.getVertices())
+            label[i] = UNEXPLORED;
+        label[v] = DISCOVERY;
+        cout << "Path:\n";
+        DFS(v, label);
+        cout << endl;
     }
 
     void fewestStop(Vertex *src, Vertex *dest)
@@ -174,7 +239,7 @@ private:
         }
         cout << endl;
 
-        cout << "Stops:\t\t\t" << cloud[dest] << endl;
+        cout << "Stops:\t\t\t" << cloud[dest] - 1 << endl;
     }
 
 public:
@@ -215,27 +280,28 @@ public:
     {
         bool quit{false};
         char choice{'Q'};
+
+        cout << fixed << setprecision(2);
         
         while (!quit)
         {
-            cout << "----------------------------------------------------------------------------\n";
+            cout << "--------------------------------------------------------------------------\n";
             cout << "0. Display all flights\n";
             cout << "1. Find a cheapest flight from one airport to another airport\n";
             cout << "2. Find a cheapest roundtrip from one airport to another airport\n";
             cout << "3. Find an order to visit all airports starting from an airport\n";
             cout << "4. Find a flight with fewest stops from one airport to another airport\n";
             cout << "Q. Exit\n";
-            cout << "----------------------------------------------------------------------------\n";
+            cout << "--------------------------------------------------------------------------\n";
             cout << "Your choice: ";
             cin >> choice;
-            cout << "----------------------------------------------------------------------------\n";
+            cout << "--------------------------------------------------------------------------\n";
             string first;
             string second;
             switch(choice)
             {
                 case '0':
                     G.print();
-                    system("pause");
                     break;
 
                 case '1':
@@ -244,8 +310,6 @@ public:
                     cout << "Go to:\t\t\t";
                     cin >> second;
                     cheapestFlight(airport[first], airport[second]);
-                    cout << "----------------------------------------------------------------------------\n";
-                    system("pause");
                     break;
 
                 case '2':
@@ -254,16 +318,12 @@ public:
                     cout << "Go to:\t\t\t";
                     cin >> second;
                     cheapestRoundTrip(airport[first], airport[second]);
-                    cout << "----------------------------------------------------------------------------\n";
-                    system("pause");
                     break;
 
                 case '3':
                     cout << "Start from:\t\t";
                     cin >> first;
-                    airportDFS(airport[first]);
-                    cout << "----------------------------------------------------------------------------\n";
-                    system("pause");
+                    visitAll(airport[first]);
                     break;
 
                 case '4':
@@ -272,8 +332,6 @@ public:
                     cout << "Go to:\t\t\t";
                     cin >> second;
                     fewestStop(airport[first], airport[second]);
-                    cout << "----------------------------------------------------------------------------\n";
-                    system("pause");
                     break;
                 
                 default:
