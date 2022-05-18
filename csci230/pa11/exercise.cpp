@@ -18,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <stack>
 #include "AdjacencyListGraph.h"
 #include "HeapPriorityQueue.h"
 #include "Entry.h"
@@ -36,6 +37,15 @@ private:
     {
     public:
         bool operator()(Entry<double, Vertex *> a, Entry<double, Vertex *> b)
+        {
+            return (a.key() < b.key());
+        }
+    };
+
+    class comp2
+    {
+    public:
+        bool operator()(Entry<int, Vertex *> a, Entry<int, Vertex *> b)
         {
             return (a.key() < b.key());
         }
@@ -75,13 +85,28 @@ private:
                     {
                         D[v] = D[u] + wgt;
                         pq.replace(pqTokens[v], Entry<double, Vertex *>(D[v], v));
+                        prev[v] = u;
                     }
                 }
             }
         }
-        cout << "Path: \n";
-
-        cout << "Cost: $" << cloud[dest] << endl;
+        cout << "Path:\t\t\t";
+        stack<Vertex *> output;
+        Vertex *cur = dest;
+        while (cur != src)
+        {
+            output.push(cur);
+            cur = prev[cur];
+        }
+        cout << src->getElement();
+        while (!output.empty())
+        {
+            cout  << " -> " << output.top()->getElement();
+            output.pop();
+        }
+        cout << endl;
+        
+        cout << "Cost:\t\t\t$" << cloud[dest] << endl;
     }
 
     void cheapestRoundTrip(Vertex *start, Vertex *end)
@@ -94,9 +119,62 @@ private:
 
     }
 
-    void fewestStop(Vertex *start, Vertex *end)
+    void fewestStop(Vertex *src, Vertex *dest)
     {
+        map<Vertex *, int> D;
+        map<Vertex *, int> cloud;
+        map<Vertex *, Vertex *> prev;
+        HeapPriorityQueue<Entry<int, Vertex *>, comp2> pq;
+        map<Vertex *, Entry<int, Vertex *>> pqTokens;
+        
+        for (Vertex *v : G.getVertices())
+        {
+            if (v == src)
+                D.insert(pair<Vertex *, int>(v, 0));
+            else
+                D.insert(pair<Vertex *, int>(v, INT_MAX));
+            pqTokens.insert(pair<Vertex *, Entry<int, Vertex *>>(v, pq.insert(Entry<int, Vertex *>(D[v], v))));
+        }
+        
+        while (!pq.empty())
+        {
+            Entry<int, Vertex *> entry = pq.removeMin();
+            int key = entry.key();
+            Vertex *u = entry.value();
+            cloud.insert(pair<Vertex *, int>(u, key));
+            pqTokens.erase(u);
+            for (Edge *e : G.outgoingEdges(u))
+            {
+                Vertex *v = G.opposite(u, e);
+                if (cloud.find(v) == cloud.end())
+                {
+                    int wgt = 1;
+                    if (D[u] + wgt < D[v])
+                    {
+                        D[v] = D[u] + wgt;
+                        pq.replace(pqTokens[v], Entry<int, Vertex *>(D[v], v));
+                        prev[v] = u;
+                    }
+                }
+            }
+        }
+        cout << "Path:\t\t\t";
+        stack<Vertex *> output;
+        Vertex *cur = dest;
+        while (cur != src)
+        {
+            output.push(cur);
+            cur = prev[cur];
+        }
+        cout << src->getElement();
+        while (!output.empty())
+        {
+            cout  << " -> " << output.top()->getElement();
+            output.pop();
+        }
+        cout << endl;
 
+        cout << "Stops:\t\t\t" << cloud[dest] << endl;
     }
 
 public:
@@ -161,36 +239,40 @@ public:
                     break;
 
                 case '1':
-                    cout << "Start from: ";
+                    cout << "Start from:\t\t";
                     cin >> first;
-                    cout << "Go to: ";
+                    cout << "Go to:\t\t\t";
                     cin >> second;
                     cheapestFlight(airport[first], airport[second]);
+                    cout << "----------------------------------------------------------------------------\n";
                     system("pause");
                     break;
 
                 case '2':
-                    cout << "Start from: ";
+                    cout << "Start from:\t\t";
                     cin >> first;
-                    cout << "Go to: ";
+                    cout << "Go to:\t\t\t";
                     cin >> second;
                     cheapestRoundTrip(airport[first], airport[second]);
+                    cout << "----------------------------------------------------------------------------\n";
                     system("pause");
                     break;
 
                 case '3':
-                    cout << "Start from: ";
+                    cout << "Start from:\t\t";
                     cin >> first;
                     airportDFS(airport[first]);
+                    cout << "----------------------------------------------------------------------------\n";
                     system("pause");
                     break;
 
                 case '4':
-                    cout << "Start from: ";
+                    cout << "Start from:\t\t";
                     cin >> first;
-                    cout << "Go to: ";
+                    cout << "Go to:\t\t\t";
                     cin >> second;
                     fewestStop(airport[first], airport[second]);
+                    cout << "----------------------------------------------------------------------------\n";
                     system("pause");
                     break;
                 

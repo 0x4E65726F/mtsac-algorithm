@@ -47,6 +47,7 @@ void dijkstra(AdjacencyListGraph G, Vertex *src, Vertex *dest)
     Map cloud;
     PQ pq;
     PQTokens pqTokens;
+    map<Vertex *, Vertex *> prev;
     
     for (Vertex *v : G.getVertices())
     {
@@ -74,17 +75,20 @@ void dijkstra(AdjacencyListGraph G, Vertex *src, Vertex *dest)
                 {
                     D[v] = D[u] + wgt;
                     pq.replace(pqTokens[v], TEntry(D[v], v));
+                    prev[v] = u;
                 }
             }
         }
     }
 
-    bool findStart = false;
+    for (auto i : prev)
+    cout << i.first->getElement() << ' ' << i.second->getElement() << endl; 
+    
+
+    bool findStart = true;
     bool findEnd = false;
     for (auto i : D)
     {
-        if (i.first == src)
-            findStart = true;
         if (i.first == dest)
             findEnd = true;
         if (findStart)
