@@ -68,7 +68,7 @@ private:
 
 	public:
 		/* Constructs InnerEdge instance from u to v, storing the given element. */
-		InnerEdge(Vertex *u, Vertex *v, int elem) 
+		InnerEdge(Vertex *u, Vertex *v, double elem) 
 		{
 			element = elem;
 			endpoints.push_back(u);
@@ -93,7 +93,7 @@ public:
 	* Constructs an empty graph.
 	* The parameter determines whether this is an undirected or directed graph.
 	*/
-	AdjacencyListGraph(bool directed = false)
+	AdjacencyListGraph(bool directed = true)
 	{ 
 		isDirected = directed; 
 	}

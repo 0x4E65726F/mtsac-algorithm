@@ -19,6 +19,8 @@
 #include <fstream>
 #include <map>
 #include "AdjacencyListGraph.h"
+#include "HeapPriorityQueue.h"
+#include "Entry.h"
 
 using namespace std;
 
@@ -28,11 +30,58 @@ private:
     AdjacencyListGraph G;
     map<string, Vertex *> airport;
     vector<string> dest;
-    vector<int> price;
+    vector<double> price;
 
-    void cheapestFlight(Vertex *start, Vertex *end)
+    class comp
     {
+    public:
+        bool operator()(Entry<double, Vertex *> a, Entry<double, Vertex *> b)
+        {
+            return (a.key() < b.key());
+        }
+    };
 
+    void cheapestFlight(Vertex *src, Vertex *dest)
+    {
+        map<Vertex *, double> D;
+        map<Vertex *, double> cloud;
+        map<Vertex *, Vertex *> prev;
+        HeapPriorityQueue<Entry<double, Vertex *>, comp> pq;
+        map<Vertex *, Entry<double, Vertex *>> pqTokens;
+        
+        for (Vertex *v : G.getVertices())
+        {
+            if (v == src)
+                D.insert(pair<Vertex *, double>(v, 0));
+            else
+                D.insert(pair<Vertex *, double>(v, INT_MAX));
+            pqTokens.insert(pair<Vertex *, Entry<double, Vertex *>>(v, pq.insert(Entry<double, Vertex *>(D[v], v))));
+        }
+        
+        while (!pq.empty())
+        {
+            Entry<double, Vertex *> entry = pq.removeMin();
+            double key = entry.key();
+            Vertex *u = entry.value();
+            cloud.insert(pair<Vertex *, double>(u, key));
+            pqTokens.erase(u);
+            for (Edge *e : G.outgoingEdges(u))
+            {
+                Vertex *v = G.opposite(u, e);
+                if (cloud.find(v) == cloud.end())
+                {
+                    int wgt = e->getElement();
+                    if (D[u] + wgt < D[v])
+                    {
+                        D[v] = D[u] + wgt;
+                        pq.replace(pqTokens[v], Entry<double, Vertex *>(D[v], v));
+                    }
+                }
+            }
+        }
+        cout << "Path: \n";
+
+        cout << "Cost: $" << cloud[dest] << endl;
     }
 
     void cheapestRoundTrip(Vertex *start, Vertex *end)
@@ -63,14 +112,17 @@ public:
         {
             string cur;
             int p{2};
-            int n;
+            double n;
 
             while (p--)
             {
                 fin >> cur;
-                dest.push_back(cur);
-                if (airport.find(cur) == airport.end())
-                    airport.insert(pair<string, Vertex *>(cur, G.insertVertex(cur)));
+                if (!cur.empty())
+                {
+                    dest.push_back(cur);
+                    if (airport.find(cur) == airport.end())
+                        airport.insert(pair<string, Vertex *>(cur, G.insertVertex(cur)));
+                }
             }
             
             fin >> n;
@@ -105,6 +157,7 @@ public:
             {
                 case '0':
                     G.print();
+                    system("pause");
                     break;
 
                 case '1':
@@ -113,6 +166,7 @@ public:
                     cout << "Go to: ";
                     cin >> second;
                     cheapestFlight(airport[first], airport[second]);
+                    system("pause");
                     break;
 
                 case '2':
@@ -121,12 +175,14 @@ public:
                     cout << "Go to: ";
                     cin >> second;
                     cheapestRoundTrip(airport[first], airport[second]);
+                    system("pause");
                     break;
 
                 case '3':
                     cout << "Start from: ";
                     cin >> first;
                     airportDFS(airport[first]);
+                    system("pause");
                     break;
 
                 case '4':
@@ -135,19 +191,20 @@ public:
                     cout << "Go to: ";
                     cin >> second;
                     fewestStop(airport[first], airport[second]);
+                    system("pause");
                     break;
                 
                 default:
                     quit = true;
             }
-            cout << "----------------------------------------------------------------------------\n";
         }
     }
 };
 
 int main()
 {
-    // code 
+    Flights test("PA11Flights.txt");
+    test.controlPanel();
 
     cout << "Author: Nero Li\n";
 
