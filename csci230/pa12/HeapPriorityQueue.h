@@ -65,13 +65,18 @@ public:
     E removeMin();				// remove minimum
 
     // New function added for CSCI 230 PA10
-    void replace(const E& oldElem, const E& newElem)
+    void replace(E elem, int r)
     {
         vector<E> allElem;
         while (!empty())
         {
-            if (min().first == oldElem.first && min().second == oldElem.second)
+            if (min().second == elem.second)
+            {
+                E newElem;
+                newElem.first = r;
+                newElem.second = min().second;
                 allElem.push_back(newElem);
+            }
             else
                 allElem.push_back(min());
             removeMin();

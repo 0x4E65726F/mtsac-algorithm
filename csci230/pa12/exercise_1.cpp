@@ -14,38 +14,27 @@
 #include <iostream>
 #include <queue>
 #include "AdjacencyListGraph.h"
+#include "HeapPriorityQueue.h"
 
 using namespace std;
 typedef pair<int, Vertex *> PQP;
 
-priority_queue<PQP> replace(priority_queue<PQP> Q, PQP oldElem, PQP newElem)
+class isLess
 {
-    vector<PQP> allElem;
-    priority_queue<PQP> resultPQ;
-    int n = Q.size();
-
-    while (!Q.empty())
+public:
+    bool operator()(PQP a, PQP b)
     {
-        if (Q.top().first == oldElem.first && Q.top().second == oldElem.second)
-            allElem.push_back(newElem);
-        else
-            allElem.push_back(Q.top());
-        Q.pop();
+        return a.first < b.first;
     }
-
-    for (auto i : allElem)
-        resultPQ.push(i);
-
-    return resultPQ;
-}
+};
 
 void PrimJarnikMST(AdjacencyListGraph G, Vertex *s)
 {
-    
-    priority_queue<PQP> Q;
+    HeapPriorityQueue<PQP, isLess> Q;
     map<Vertex *, int> distance;
     map<Vertex *, Edge *> parent;
     map<Vertex *, PQP> locator;
+    map<Vertex *, bool> visited;
     for (auto v : G.getVertices())
     {
         if (v == s)
@@ -57,26 +46,28 @@ void PrimJarnikMST(AdjacencyListGraph G, Vertex *s)
         PQP l;
         l.first = distance[v];
         l.second = v;
-        Q.push(l);
+        Q.insert(l);
         locator[v] = l;
+        visited[v] = false;
     }
     
     while (!Q.empty())
     {
-        PQP l = Q.top();
-        Q.pop();
+        PQP l = Q.min();
+        Q.removeMin();
         Vertex *u = l.second;
+        // cout << u->getElement() << endl;
+        visited[u] = true;
         for (auto e : G.incomingEdges(u))
         {
             Vertex *z = G.opposite(u, e);
             int r = e->getElement();
-            if (r < distance[z])
+            if (r < distance[z] && !visited[z])
             {
                 distance[z] = r;
                 parent[z] = e;
-                PQP newLoc = locator[z];
-                newLoc.first = r;
-                Q = replace(Q, locator[z], newLoc);
+                Q.replace(locator[z], r);
+                // cout << z->getElement() << ", " << r << ": " << Q.min().second->getElement() << endl;
             }
         }
     }
@@ -98,7 +89,7 @@ void PrimJarnikMST(AdjacencyListGraph G, Vertex *s)
 int main()
 {
     AdjacencyListGraph G;
-/*
+
     Vertex *A = G.insertVertex("A");
     Vertex *B = G.insertVertex("B");
     Vertex *C = G.insertVertex("C");
@@ -111,22 +102,6 @@ int main()
     G.insertEdge(C, D, 2);
     G.insertEdge(D, E, 5);
     G.insertEdge(C, E, 3);
-*/
-    Vertex *A = G.insertVertex("A");
-    Vertex *B = G.insertVertex("B");
-    Vertex *C = G.insertVertex("C");
-    Vertex *D = G.insertVertex("D");
-    Vertex *E = G.insertVertex("E");
-    Vertex *F = G.insertVertex("F");
-    G.insertEdge(A, B, 2);
-    G.insertEdge(A, C, 8);
-    G.insertEdge(A, E, 7);
-    G.insertEdge(B, C, 5);
-    G.insertEdge(B, D, 7);
-    G.insertEdge(C, D, 9);
-    G.insertEdge(D, F, 4);
-    G.insertEdge(C, E, 8);
-    G.insertEdge(E, F, 3);
 
     cout << "Original Graph:\n";
     G.print();
