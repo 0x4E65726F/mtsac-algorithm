@@ -1,9 +1,11 @@
-/*  Program: PA_#_exercise_1  
+/*  Program: PA_12_exercise_1  
     Author: Nero Li
     Class: CSCI 230   
-    Date: MM/DD/2022	     
+    Date: 05/31/2022	     
     Description: 
-        ----------------------------------------------------------------
+        Implement one MST algorithm -- either Prim-Jarnik Algorithm or 
+        Kruskal Algorithm. Try a small graph below and print out the MST 
+        and total cost.
 
     I certify that the code below is my own work.
 	
@@ -27,6 +29,32 @@ public:
         return a.first < b.first;
     }
 };
+
+void printMST(AdjacencyListGraph G, map<Vertex *, Edge *> parent, Vertex *src, int level)
+{
+    cout << src->getElement() << endl;
+    
+    for (auto i : parent)
+    {
+        if (i.second != NULL)
+        {
+            if (G.opposite(i.first, i.second) == src)
+            {
+                for (int p = 0; p < level; ++p)
+                {
+                    if (p == level - 1)
+                        cout << "└";
+                    else
+                        cout << " ";
+                }
+                    
+                printMST(G, parent, i.first, level + 1);
+            }
+        }
+    }
+    
+    
+}
 
 void PrimJarnikMST(AdjacencyListGraph G, Vertex *s)
 {
@@ -72,18 +100,13 @@ void PrimJarnikMST(AdjacencyListGraph G, Vertex *s)
         }
     }
     
+    printMST(G, parent, s, 1);
+
+    int cost{0};
     for (auto i : parent)
-    {
         if (i.second != NULL)
-        {
-            cout << i.first->getElement() << "\'s parent is: " << G.opposite(i.first, i.second)->getElement() << endl;
-        }
-        else
-        {
-            cout << i.first->getElement() << " is root\n";
-        }
-    }
-    
+            cost += i.second->getElement();
+    cout << "Total cost: " << cost << endl;
 }
 
 int main()
