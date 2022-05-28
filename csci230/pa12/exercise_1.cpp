@@ -43,7 +43,7 @@ void printMST(AdjacencyListGraph G, map<Vertex *, Edge *> parent, Vertex *src, i
                 for (int p = 0; p < level; ++p)
                 {
                     if (p == level - 1)
-                        cout << "└";
+                        cout << "-";
                     else
                         cout << " ";
                 }

@@ -12,60 +12,90 @@
 */
 
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <queue>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
-void merge(vector<int> &vec, long long &comparisons, long long &dataMoves, vector<int> a, vector<int> b)
+const int BUFFER_SIZE{4096};
+
+void printVector(vector<int> vec)
 {
-    int i = 0, j = 0;
-
-    while (i < a.size() && j < b.size())
-    {
-        ++comparisons;
-        if (a[i] < b[j])
-            vec.push_back(a[i++]);
-        else
-        {
-            ++dataMoves;
-            vec.push_back(b[j++]);
-        }
-    }
-
-    while (i < a.size() || j < b.size())
-    {
-        if (i < a.size())
-            vec.push_back(a[i++]);
-        else
-            vec.push_back(b[j++]);
-    }
+    for (int i : vec)
+        cout << i << " ";
+    cout << endl;
 }
 
-void mergeSort(vector<int> &vec, long long &comparisons, long long &dataMoves)
+void test(string str)
 {
-    if (vec.size() <= 1)
-        return;
+    ifstream fin;
+    fin.open(str, ios::binary);
 
-    vector<int> a;
-    vector<int> b;
-
-    for (int i = 0; i < vec.size(); ++i)
+    vector<string> fileName;
+    int fileCount = 0;
+    char fileBuffer[BUFFER_SIZE];
+    
+    if (!fin)
     {
-        if (i < vec.size() / 2)
-            a.push_back(vec[i]);
-        else
-            b.push_back(vec[i]);
+        cout << "File error\n";
+        return;
     }
+    
+    // Seperate the file 
+    fin.read(fileBuffer, BUFFER_SIZE);
+    while (fin.gcount() != 0)
+    {
+        ofstream fout;
+        string cur = "file_";
+        ++fileCount;
+        cur += to_string(fileCount);
+        cur += ".bin";
+        fileName.push_back(cur);
+        fout.open(cur, ios::binary);
+        if (!fout)
+        {
+            cout << "File error\n";
+            return;
+        }
+        fout.write(fileBuffer, BUFFER_SIZE);
+        fout.close();
+        fin.read(fileBuffer, BUFFER_SIZE);
+    }
+    fin.close();
 
-    mergeSort(a, comparisons, dataMoves);
-    mergeSort(b, comparisons, dataMoves);
-    vec.clear();
-    merge(vec, comparisons, dataMoves, a, b);
+    // Sort each single file   
+    vector<int> targetVec;
+    char intBuffer[sizeof(int)]; 
+    for (string str : fileName)
+    {
+        ifstream fcur;
+        fcur.open(str, ios::binary | ios::ate);
+        if (!fcur)
+        {
+            cout << "File error\n";
+            return;
+        }
+        else
+        {
+            cout << str << " opened\n";
+        }
+
+        int value;
+        fcur.read(reinterpret_cast<char*>(&value), sizeof(value));
+        cout << value;
+        
+        cout << endl;
+        fcur.close();
+    }
+    
 }
 
 int main()
 {
-    // code 
+    test("filetoSort.bin");
 
     cout << "Author: Nero Li\n";
 
