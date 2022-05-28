@@ -6,20 +6,26 @@ using namespace std;
 
 int main()
 {
-    vector<int> vec;
-    ifstream fin;
-    fin.open("filetoSort.bin", ios::binary);
+    vector<char> vec;
+    ifstream file;
+    file.open("filetoSort.bin", ios::binary);
 
-    if (!fin)
+    if (!file)
     {
         cout << "err\n";
         return 1;
     }
 
-    while (fin.gcount() != 0)
+    file.unsetf(std::ios::skipws);
+    std::streampos fileSize;
+    file.seekg(0, std::ios::end);
+    fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    while (file.gcount() != 0)
     {
         int n;
-        fin.read((char *)&n, sizeof(int));
+        file.read((char *)&n, sizeof(int));
         vec.push_back(n);
     }
 
