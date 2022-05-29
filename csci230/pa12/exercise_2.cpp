@@ -1,9 +1,13 @@
-/*  Program: PA_#_exercise_2  
+/*  Program: PA_12_exercise_2  
     Author: Nero Li
     Class: CSCI 230   
-    Date: MM/DD/2022	     
+    Date: 05/31/2022	     
     Description: 
-        ----------------------------------------------------------------
+        Option C: Implement the simple external sorting using algorithm 
+        from the “external sorting” section of the Shaffer book (simple 
+        merge with no replacement selection). You will sort a binary 
+        file with 100,000 integers and assume a block size is 4KB. 
+        Output first 5 values and last 5 values when you are done.
 
     I certify that the code below is my own work.
 	
@@ -14,29 +18,17 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <queue>
 #include <string>
 #include <algorithm>
 
 using namespace std;
 
-const int BUFFER_SIZE{4096};
+const int BUFFER_SIZE{4000};
 
-void printVector(vector<int> vec)
-{
-    for (int i : vec)
-        cout << i << " ";
-    cout << endl;
-}
-
-void test(string str)
+void seperateFile(string str)
 {
     ifstream fin;
     fin.open(str, ios::binary);
-
-    vector<string> fileName;
-    int fileCount = 0;
-    char fileBuffer[BUFFER_SIZE];
     
     if (!fin)
     {
@@ -44,58 +36,144 @@ void test(string str)
         return;
     }
     
-    // Seperate the file 
-    fin.read(fileBuffer, BUFFER_SIZE);
+    fin.seekg(0, ios::end);
+    int totalNum = fin.tellg() / sizeof(int);
+    char fileBuffer[sizeof(int)];
+    fin.close();
+
+    fin.open(str, ios::binary);
+    ofstream fout;
+    fout.open("firstHalf.bin", ios::binary);
+    for (int i = 0; i <= totalNum / 2; ++i)
+    {
+        fin.read(fileBuffer, sizeof(int));
+        if (fin.gcount() != 0)
+            fout.write(fileBuffer, sizeof(int));
+    }
+    fout.close();
+
+    fout.open("secondHalf.bin", ios::binary);
+    for (int i = 0; i <= totalNum / 2; ++i)
+    {
+        fin.read(fileBuffer, sizeof(int));
+        if (fin.gcount() != 0)
+            fout.write(fileBuffer, sizeof(int));
+    }
+    fout.close();
+    fin.close(); 
+}
+
+void sortFile(string str)
+{
+    ifstream fin;
+    ofstream fout;
+    vector<int> vec;
+
+    fin.open(str, ios::binary);
+    int value = 0;
+    fin.read(reinterpret_cast<char*>(&value), sizeof(int));
     while (fin.gcount() != 0)
     {
-        ofstream fout;
-        string cur = "file_";
-        ++fileCount;
-        cur += to_string(fileCount);
-        cur += ".bin";
-        fileName.push_back(cur);
-        fout.open(cur, ios::binary);
-        if (!fout)
-        {
-            cout << "File error\n";
-            return;
-        }
-        fout.write(fileBuffer, BUFFER_SIZE);
-        fout.close();
-        fin.read(fileBuffer, BUFFER_SIZE);
+        vec.push_back(value);
+        fin.read(reinterpret_cast<char*>(&value), sizeof(int));
     }
     fin.close();
 
-    // Sort each single file   
-    vector<int> targetVec;
-    char intBuffer[sizeof(int)]; 
-    for (string str : fileName)
+    sort(vec.begin(), vec.end());
+
+    fout.open(str, ios::binary);
+    fout.clear();
+    for (int i : vec)
+        fout.write(reinterpret_cast<char*>(&i), sizeof(int));
+    fout.close();
+}
+
+void mergeFile(string str1, string str2)
+{
+    ifstream fin1;
+    ifstream fin2;
+    ofstream fout;
+
+    fin1.open(str1, ios::binary);
+    fin2.open(str2, ios::binary);
+    fout.open("result.bin", ios::binary);
+
+    int i;
+    int j;
+    fin1.read(reinterpret_cast<char*>(&i), sizeof(int));
+    fin2.read(reinterpret_cast<char*>(&j), sizeof(int));
+
+    while (fin1.gcount() && fin2.gcount())
     {
-        ifstream fcur;
-        fcur.open(str, ios::binary | ios::ate);
-        if (!fcur)
+        int k;
+        if (i < j)
         {
-            cout << "File error\n";
-            return;
+            k = i;
+            fin1.read(reinterpret_cast<char*>(&i), sizeof(int));
         }
         else
         {
-            cout << str << " opened\n";
+            k = j;
+            fin2.read(reinterpret_cast<char*>(&j), sizeof(int));
         }
-
-        int value;
-        fcur.read(reinterpret_cast<char*>(&value), sizeof(value));
-        cout << value;
-        
-        cout << endl;
-        fcur.close();
+        fout.write(reinterpret_cast<char*>(&k), sizeof(int));
     }
+
+    while (fin1.gcount())
+    {
+        fout.write(reinterpret_cast<char*>(&i), sizeof(int));
+        fin1.read(reinterpret_cast<char*>(&i), sizeof(int));
+    }
+    
+    while (fin2.gcount())
+    {
+        fout.write(reinterpret_cast<char*>(&j), sizeof(int));
+        fin2.read(reinterpret_cast<char*>(&j), sizeof(int));
+    }
+    
+    fin1.close();
+    fin2.close();
+    fout.close();
+}
+
+void printFinalResult(string str)
+{
+    vector<int> vec;
+    ifstream file;
+    file.open(str, ios::binary);
+    
+    if (!file)
+    {
+        cout << "err\n";
+        return;
+    }
+    file.seekg(0, ios::end);
+    int totalNum = file.tellg() / sizeof(int);
+    file.close();
+
+    file.open(str, ios::binary);
+
+    int value = 0;
+    file.read(reinterpret_cast<char*>(&value), sizeof(int));
+    while (file.gcount() != 0)
+    {
+        vec.push_back(value);
+        file.read(reinterpret_cast<char*>(&value), sizeof(int));
+    }
+
+    for (int i = 1; i <= vec.size(); ++i)
+        if (i <= 5 || i > vec.size() - 5)
+            cout << "vec[" << i - 1 << "] = " << vec[i - 1] << endl;
     
 }
 
 int main()
 {
-    test("filetoSort.bin");
+    seperateFile("filetoSort.bin");
+    sortFile("firstHalf.bin");
+    sortFile("secondHalf.bin");
+    mergeFile("firstHalf.bin", "secondHalf.bin");
+    printFinalResult("result.bin");
 
     cout << "Author: Nero Li\n";
 
