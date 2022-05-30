@@ -63,6 +63,17 @@ void seperateFile(string str)
     fin.close(); 
 }
 
+void sortFile(string str1, string str2)
+{
+    ifstream fin1;
+    ifstream fin2;
+    ofstream fout;
+
+    fin1.open(str1, ios::binary);
+    fin2.open(str2, ios::binary);
+    fout.open("result.bin", ios::binary);
+}
+
 void sortFile(string str)
 {
     ifstream fin;
