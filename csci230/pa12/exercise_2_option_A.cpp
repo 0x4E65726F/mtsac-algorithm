@@ -41,22 +41,25 @@ map<int, int> checkAvailableHoles(bool blocks[], bool withOutput = false)
     bool countingHoleSize = false;
     int holeStartPoint = -1;
     int size = 1;
+
+    int countHoles = 0;
+    int countSize = 0;
+
     for (int i = 0; i < SIZE; ++i)
     {
-        if (!blocks[i])
+        if (blocks[i])
         {
             if (!countingHoleSize)
             {
-                if (withOutput)
-                    cout << i << "\t";
+                ++countHoles;
                 countingHoleSize = true;
                 holeStartPoint = i;
                 size = 1;
             }
             else if (i == SIZE - 1)
             {
-                if (withOutput)
-                    cout << ++size << endl;
+                ++size;
+                countSize += size;
             }
             else
             {
@@ -67,20 +70,25 @@ map<int, int> checkAvailableHoles(bool blocks[], bool withOutput = false)
         {
             if (countingHoleSize)
             {
-                if (withOutput)
-                    cout << size << endl;
+                countSize += size;
                 countingHoleSize = false;
                 holes[holeStartPoint] = size;
             }
         }
     }
 
+    if (withOutput)
+        cout << " - " << countHoles << " block(s) are still available.\n" << " - " << countSize * 4 << " byte(s) of memory still available.\n" << endl;
+    
+
     return holes;
 }
 
-void bestFit()
+void doFit(bool isFirstFit)
 {
-    bool blocks[SIZE] = {0};
+    bool blocks[SIZE];
+    for (int i = 0; i < SIZE; ++i) 
+        blocks[i] = false;
     int totalAllocation = 0;
     while (totalAllocation <= (SIZE) / 2)
     {
@@ -95,74 +103,37 @@ void bestFit()
     while (!allocationFail)
     {
         int allocationTime = generateNumber();
-        int cloestRange = SIZE;
-        int holeStartPoint = -1;
-
-        for (int i = 0; i < SIZE; ++i)
-        {
-            if (!blocks[i])
-            {
-                int curStartPoint = i;
-                int curSize = 0;
-                while (i < SIZE && !blocks[i])
-                {
-                    ++curSize;
-                    ++i;
-                }
-                int curRange = curSize - allocationTime;
-                if (curRange < 0)
-                {
-                    continue;
-                }
-                else if (curRange < cloestRange)
-                {
-                    cloestRange = curRange;
-                    holeStartPoint = curStartPoint;
-                }
-            }
-        }
-
-        if (holeStartPoint = -1)
-        {
-            allocationFail = true;
-        }
-        else
-        {
-            for (int j = 0; j < allocationTime; ++j) 
-                blocks[holeStartPoint + j] = true;
-        }
-    }
-
-    checkAvailableHoles(blocks);
-}
-
-void firstFit()
-{
-    bool blocks[SIZE] = {0};
-    int totalAllocation = 0;
-    while (totalAllocation <= (SIZE) / 2)
-    {
-        int allocationTime = generateNumber();
-        int startBlock = randomSpace();
-        totalAllocation += allocationTime;
-        for (int i = 0; i < allocationTime && i + startBlock < SIZE; ++i) 
-            blocks[startBlock + i] = true;
-    }
-
-    bool allocationFail = false;
-    while (!allocationFail)
-    {
-        int allocationTime = generateNumber();
-        int holeStartPoint = -1;
         map<int, int> holes = checkAvailableHoles(blocks);
-        for (auto i : holes)
+        int holeStartPoint = -1;
+        
+        if (isFirstFit)
         {
-            if (i.second >= allocationTime)
+            // main part for first-fit
+            for (auto i : holes)
             {
-                holeStartPoint = i.first;
-                break;
+                if (i.second >= allocationTime)
+                {
+                    holeStartPoint = i.first;
+                    break;
+                }
             }
         }
+        else
+        {
+            // main part for best-fit
+            int minGap = SIZE;
+            for (auto i : holes)
+            {
+                int curGap = i.second - allocationTime;
+                if (curGap >= 0 && curGap < minGap)
+                {
+                    minGap = curGap;
+                    holeStartPoint = i.first;
+                }
+            }
+        }
+        
+
         if (holeStartPoint = -1)
         {
             allocationFail = true;
@@ -171,17 +142,23 @@ void firstFit()
         {
             for (int j = 0; j < allocationTime; ++j) 
                 blocks[holeStartPoint + j] = true;
+            allocationFail = false;
         }
     }
 
+    if (isFirstFit)
+        cout << "For first-fit:\n";
+    else
+        cout << "For best-fit:\n";
     checkAvailableHoles(blocks, true);
 }
 
 int main()
 {
     srand(time(NULL));
-    // bestFit();
-    firstFit();
+    
+    doFit(false);
+    doFit(true);
     
     cout << "Author: Nero Li\n";
 
