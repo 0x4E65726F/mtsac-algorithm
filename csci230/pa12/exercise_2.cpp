@@ -67,11 +67,35 @@ void sortFile(string str1, string str2)
 {
     ifstream fin1;
     ifstream fin2;
-    ofstream fout;
+    ofstream fout1;
+    ofstream fout2;
+    int inBuffer1[BUFFER_SIZE / sizeof(int)];
+    int inBuffer2[BUFFER_SIZE / sizeof(int)];
+    int outBuffer1[BUFFER_SIZE / sizeof(int)];
+    int outBuffer2[BUFFER_SIZE / sizeof(int)];
 
     fin1.open(str1, ios::binary);
     fin2.open(str2, ios::binary);
-    fout.open("result.bin", ios::binary);
+    fout1.open("processOdd1.bin", ios::binary);
+    fout2.open("processOdd2.bin", ios::binary);
+
+    if (!fin1 || !fin2)
+    {
+        cout << "File error\n";
+        return;
+    }
+
+    int runCount = 1;
+    fin1.read(reinterpret_cast<char*>(&inBuffer1), BUFFER_SIZE);
+    fin2.read(reinterpret_cast<char*>(&inBuffer2), BUFFER_SIZE);
+    while (fin1.gcount() != 0 && fin2.gcount() != 0)
+    {
+        
+        fout1.write(reinterpret_cast<char*>(&outBuffer1), BUFFER_SIZE);
+        fout2.write(reinterpret_cast<char*>(&outBuffer2), BUFFER_SIZE);
+        fin1.read(reinterpret_cast<char*>(&inBuffer1), BUFFER_SIZE);
+        fin2.read(reinterpret_cast<char*>(&inBuffer2), BUFFER_SIZE);
+    }
 }
 
 void sortFile(string str)
