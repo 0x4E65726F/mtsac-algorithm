@@ -63,6 +63,11 @@ void seperateFile(string str)
     fin.close(); 
 }
 
+void merge(int runCount, int inBuffer1[], int inBUffer2[], int outBuffer1[], int outBuffe2[])
+{
+
+}
+
 void sortFile(string str1, string str2)
 {
     ifstream fin1;
