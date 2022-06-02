@@ -24,7 +24,7 @@
 
 using namespace std;
 
-void merge(vector<int> a, vector<int> b, long long &count, bool withOutput)
+void merge(vector<int> &vec, vector<int> &a, vector<int> &b, long long &count, bool withOutput)
 {
     int i = 0, j = 0;
 
@@ -33,16 +33,25 @@ void merge(vector<int> a, vector<int> b, long long &count, bool withOutput)
         if (a[i] > b[j])
         {
             if (withOutput)
-                cout << "(" << a[i] << ", " << b[j] << ")\n";
-            ++count;
-            ++j;
+                for (int k = i; k < a.size(); ++k)
+                    cout << "(" << a[k] << ", " << b[j] << ")\n";
+            count += a.size() - i;
+            vec.push_back(b[j++]);
         }
         else
-            ++i;   
+            vec.push_back(a[i++]);   
+    }
+
+    while (i < a.size() || j < b.size())
+    {
+        if (i < a.size())
+            vec.push_back(a[i++]);
+        else
+            vec.push_back(b[j++]);
     }
 }
 
-void mergeInversion(vector<int> vec, long long &count, bool withOutput)
+void mergeInversion(vector<int> &vec, long long &count, bool withOutput)
 {
     if (vec.size() <= 1)
         return;
@@ -50,17 +59,16 @@ void mergeInversion(vector<int> vec, long long &count, bool withOutput)
     vector<int> a;
     vector<int> b;
 
-    for (int i = 0; i < vec.size(); ++i)
-    {
-        if (i < vec.size() / 2)
-            a.push_back(vec[i]);
-        else
-            b.push_back(vec[i]);
-    }
+    int i = vec.size() / 2;
+    vector<int>::iterator mid = vec.begin() + i;
+
+    a.assign(vec.begin(), mid);
+    b.assign(mid, vec.end());
 
     mergeInversion(a, count, withOutput);
     mergeInversion(b, count, withOutput);
-    merge(a, b, count, withOutput);
+    vec.clear();
+    merge(vec, a, b, count, withOutput);
 }
 
 long long simpleInversion(vector<int> vec, bool withOutput = false)
