@@ -1,7 +1,7 @@
 /*  Program: Lab_Final_1  
     Author: Nero Li
-    Class: CSCI 220   
-    Date: 12/09/2021	     
+    Class: CSCI 230   
+    Date: 06/09/2022	     
     Description: 
         Given a large data file of positive integers up to 1 million values, your task is to quickly
         determine if an input value x is in the file and there is also a value y in the file that
@@ -19,6 +19,12 @@
             Input t: 10000000<Enter>
             No
 
+        New requirements:
+
+        -	Store the key as string instead of int
+        -   Given a valid input, determine if the reverse string is in the hash table.
+
+
     I certify that the code below is my own work.
 	
 	Exception(s): N/A
@@ -27,32 +33,34 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <unordered_set>
 
 using namespace std;
 
-void func(unordered_set<int> s)
+void func(unordered_set<string> s)
 {
-    int x;
-    int t;
+    string x;
 
     cout << "Input x: ";
     cin >> x;
-    cout << "Input t: ";
-    cin >> t;
 
-    int y = t - x;
+    string y = x;
+    reverse(y.begin(), y.end());
     
-    if (s.find(x) == s.end() || s.find(y) == s.end())
-        cout << "No\n" << endl;
+    if (s.find(y) == s.end())
+        cout << "No, " << y << " is not in the file" << endl;
+    else if (s.find(x) == s.end())
+        cout << "No, " << x << " is not in the file" << endl;
     else
-        cout << "Yes\n" << endl;
+        cout << "Yes, both " << x << " and " << y << " are in the file" << endl;
 
+    cout << endl;
 }
 
 int main()
 {
-    unordered_set<int> s;
+    unordered_set<string> s;
     string file = "large100k.txt";
 
     ifstream fin;
@@ -66,13 +74,16 @@ int main()
 
     while (!fin.eof())
     {
-        int n;
+        string n;
         fin >> n;
         s.insert(n);
     }
     
     func(s);
     func(s);
+    func(s);
+
+    fin.close();
 
     cout << "Author: Nero Li\n";
     return 0;
