@@ -1,4 +1,7 @@
 # mtsac-algorithm
+These are the coding activities that I was doing during the Assembly Language classes.
+All information about class info has been masked, please get in touch with the repo owner for more information.
+The following text is the quick notes done during the class.
 ## 02222022
 ```
 Searching
